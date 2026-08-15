@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qws_ | Linktree</title>
+    <title>QWS | Official Profile</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,10 @@
         }
 
         body {
-            background-color: #0f0f12;
+            /* خلفية الموقع مع طبقة غمقان خفيفة حتى تبرز الأزرار والكلام */
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                        url('https://i.ibb.co/gMz0BG4p/background.jpg') no-repeat center center fixed;
+            background-size: cover;
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -26,29 +29,38 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
+            background: rgba(15, 15, 18, 0.75);
+            padding: 30px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .profile-img {
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             border: 3px solid #8a2be2;
             object-fit: cover;
-            margin-bottom: 15px;
-            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+            margin: 0 auto 15px auto;
+            display: block;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             letter-spacing: 1px;
+            color: #ffffff;
         }
 
         p.bio {
-            font-size: 14px;
-            color: #a0a0a0;
+            font-size: 15px;
+            color: #d1d1d1;
             margin-bottom: 25px;
+            font-weight: 500;
         }
 
         .links-container {
@@ -59,34 +71,34 @@
 
         .link-btn {
             display: block;
-            background: #1a1a24;
+            background: rgba(26, 26, 36, 0.85);
             color: #ffffff;
             text-decoration: none;
             padding: 14px 20px;
             border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
-            border: 1px solid #2a2a3a;
+            border: 1px solid rgba(138, 43, 226, 0.4);
             transition: all 0.3s ease;
         }
 
         .link-btn:hover {
             background: #8a2be2;
             border-color: #8a2be2;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.5);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- الصورة الشخصية -->
-        <img class="profile-img" src="https://via.placeholder.com/150" alt="Qws_">
+        <!-- الصورة الشخصية في الأعلى -->
+        <img class="profile-img" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="Qws_">
 
-        <!-- الاسم والبايو -->
+        <!-- الاسم والوصف -->
         <h1>Qws_</h1>
-        <p class="bio">أهلاً بكم في صفختي الشخصية</p>
+        <p class="bio">مرحباً في موقع QWS</p>
 
         <!-- الأزرار والروابط -->
         <div class="links-container">
@@ -97,5 +109,4 @@
     </div>
 
 </body>
-  </html>
-  
+</html>
