@@ -89,7 +89,6 @@
             box-shadow: 0 5px 20px rgba(138, 43, 226, 0.5);
         }
 
-        /* قسم التقييمات */
         .rating-section {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 20px;
@@ -172,7 +171,7 @@
 
         <!-- قسم التقييم بالنجوم -->
         <div class="rating-section">
-            <div class="rating-title">قيم موقع QWS:</div>
+            <div class="rating-title">قيم موقع QWS</div>
             <div class="stars" id="starContainer">
                 <span class="star" onclick="setRating(1)">★</span>
                 <span class="star" onclick="setRating(2)">★</span>
@@ -212,7 +211,6 @@
                 return;
             }
             
-            // حفظ التقييم في المتصفح المحلي
             let savedRatings = JSON.parse(localStorage.getItem('qws_ratings')) || [5];
             savedRatings.push(currentRating);
             localStorage.setItem('qws_ratings', JSON.stringify(savedRatings));
