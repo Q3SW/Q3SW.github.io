@@ -2,108 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة QWS</title>
+    <title>مشروع QWS المتكامل</title>
     <style>
         :root { --main: #8a2be2; --bg: #121214; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .box { width: 350px; background: #1e1e24; padding: 20px; border-radius: 20px; border: 2px solid var(--main); }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .box { width: 350px; background: #1e1e24; padding: 20px; border-radius: 20px; border: 1px solid var(--main); }
         .screen { display: none; } .active { display: block; }
-        button { width: 100%; padding: 12px; margin: 5px 0; border-radius: 8px; border: none; background: var(--main); color: #fff; font-weight: bold; cursor: pointer; }
-        .cell { width: 90px; height: 90px; background: #2a2a32; display: inline-block; font-size: 35px; text-align: center; line-height: 90px; cursor: pointer; border-radius: 8px; margin: 3px; }
-        .win-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 20; flex-direction: column; justify-content: center; align-items: center; }
-        .stats { background: #000; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 14px; }
+        button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; background: var(--main); color: #fff; font-weight: bold; cursor: pointer; }
+        .stats { display: flex; justify-content: space-between; background: #000; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        .cell { width: 90px; height: 90px; background: #2a2a32; display: inline-block; font-size: 30px; text-align: center; line-height: 90px; cursor: pointer; border-radius: 8px; margin: 3px; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <!-- الشاشة الرئيسية -->
-    <div id="home" class="screen active">
-        <h1>لعبة QWS</h1>
-        <button onclick="showScreen('login')">تسجيل الدخول</button>
-        <button onclick="showScreen('game')">اللعب السريع</button>
+    <!-- 1. شاشة الترحيب -->
+    <div id="welcome" class="screen active">
+        <h1>مرحباً بك في QWS</h1>
+        <button onclick="show('login')">تسجيل الدخول / إنشاء حساب</button>
     </div>
 
-    <!-- شاشة تسجيل الدخول -->
+    <!-- 2. تسجيل الدخول -->
     <div id="login" class="screen">
         <h2>تسجيل الدخول</h2>
-        <input type="text" id="user" placeholder="اسم المستخدم" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+        <input type="text" id="username" placeholder="اسم المستخدم" style="width:100%; padding:10px; margin-bottom:10px;">
         <button onclick="login()">دخول</button>
-        <button onclick="showScreen('home')" style="background:#444;">رجوع</button>
     </div>
 
-    <!-- شاشة اللعب -->
-    <div id="game" class="screen">
-        <h3 id="turnStatus">دورك (X)</h3>
-        <div id="board">
-            <div class="cell" onclick="play(0)"></div><div class="cell" onclick="play(1)"></div><div class="cell" onclick="play(2)"></div>
-            <div class="cell" onclick="play(3)"></div><div class="cell" onclick="play(4)"></div><div class="cell" onclick="play(5)"></div>
-            <div class="cell" onclick="play(6)"></div><div class="cell" onclick="play(7)"></div><div class="cell" onclick="play(8)"></div>
+    <!-- 3. لوحة التحكم (الرئيسية) -->
+    <div id="dashboard" class="screen">
+        <div class="stats">
+            <span>نقاط: <span id="pts">0</span></span>
+            <span>ليفل: <span id="lvl">1</span></span>
+            <span>رتبة: <span id="rank">مبتدئ</span></span>
         </div>
-        <button onclick="showScreen('home')">الخروج</button>
+        <button onclick="show('game')">ابدأ لعبة X-O</button>
+        <button onclick="show('shop')">المتجر والشارات</button>
     </div>
-</div>
 
-<!-- شاشة الفوز BOOYAH -->
-<div id="winOverlay" class="win-overlay">
-    <h1 style="color: gold; font-size: 50px;">BOOYAH!</h1>
-    <p>انتصار أسطوري</p>
-    <button style="width: 200px;" onclick="closeWin()">استمرار</button>
+    <!-- 4. اللعبة -->
+    <div id="game" class="screen">
+        <h3>لعبة X-O</h3>
+        <div id="board">
+            <div class="cell" onclick="move(0)"></div><div class="cell" onclick="move(1)"></div><div class="cell" onclick="move(2)"></div>
+            <div class="cell" onclick="move(3)"></div><div class="cell" onclick="move(4)"></div><div class="cell" onclick="move(5)"></div>
+            <div class="cell" onclick="move(6)"></div><div class="cell" onclick="move(7)"></div><div class="cell" onclick="move(8)"></div>
+        </div>
+        <button onclick="show('dashboard')">رجوع</button>
+    </div>
+
+    <!-- 5. المتجر -->
+    <div id="shop" class="screen">
+        <h2>المتجر</h2>
+        <p>اشترِ شارات الفخر لزيادة مستواك!</p>
+        <button onclick="buy('شارة النجم', 50)">شراء "شارة النجم" (50 نقطة)</button>
+        <button onclick="show('dashboard')">رجوع</button>
+    </div>
 </div>
 
 <script>
-    let board = ["","","","","","","","",""];
-    let isPlayer = true;
-
-    function showScreen(id) {
+    let points = 0; let level = 1; let board = ["","","","","","","","",""];
+    
+    function show(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    function play(i) {
-        if(board[i] == "" && isPlayer) {
+    function login() { show('dashboard'); }
+
+    function move(i) {
+        if(board[i] == "") {
             board[i] = "X";
-            updateUI();
-            if(checkWin("X")) {
-                document.getElementById('winOverlay').style.display = 'flex';
-            } else {
-                isPlayer = false;
-                document.getElementById('turnStatus').innerText = "الخصم يفكر...";
-                setTimeout(bot, 800);
-            }
+            document.querySelectorAll('.cell')[i].innerText = "X";
+            points += 10;
+            updateStats();
+            if(points >= 100) level = 2;
+            alert("ربحت 10 نقاط!");
         }
     }
 
-    function bot() {
-        let empty = board.map((v,i) => v==""?i:null).filter(v=>v!=null);
-        if(empty.length > 0) {
-            let move = empty[Math.floor(Math.random()*empty.length)];
-            board[move] = "O";
-            updateUI();
-            if(checkWin("O")) alert("خسرت الدور!");
-            isPlayer = true;
-            document.getElementById('turnStatus').innerText = "دورك (X)";
+    function updateStats() {
+        document.getElementById('pts').innerText = points;
+        document.getElementById('lvl').innerText = level;
+        document.getElementById('rank').innerText = level > 1 ? "محترف" : "مبتدئ";
+    }
+
+    function buy(item, cost) {
+        if(points >= cost) {
+            points -= cost;
+            alert("تم شراء " + item);
+            updateStats();
+        } else {
+            alert("نقاطك غير كافية!");
         }
     }
-
-    function checkWin(p) {
-        const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        return w.some(c => c.every(i => board[i] == p));
-    }
-
-    function updateUI() {
-        let cells = document.querySelectorAll('.cell');
-        board.forEach((v,i) => cells[i].innerText = v);
-    }
-
-    function closeWin() {
-        document.getElementById('winOverlay').style.display = 'none';
-        board = ["","","","","","","","",""];
-        updateUI();
-    }
-
-    function login() { alert("تم تسجيل الدخول!"); showScreen('home'); }
 </script>
 </body>
 </html>
