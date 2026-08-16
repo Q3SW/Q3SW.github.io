@@ -34,6 +34,45 @@
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        /* زر الأيقونة العلوية للتنقل */
+        .top-nav-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .top-nav-btn:hover {
+            background: #8a2be2;
+            border-color: #8a2be2;
+            transform: scale(1.1);
+        }
+
+        .top-nav-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: #ffffff;
+        }
+
+        /* الصفحات */
+        .page {
+            display: block;
+        }
+
+        .page.hidden {
+            display: none;
         }
 
         .profile-img {
@@ -42,17 +81,31 @@
             border-radius: 50%;
             border: 3px solid #8a2be2;
             object-fit: cover;
-            margin: 0 auto 15px auto;
+            margin: 10px auto 15px auto;
             display: block;
             box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .name-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         h1 {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 8px;
             letter-spacing: 1px;
             color: #ffffff;
+        }
+
+        .verify-badge {
+            width: 20px;
+            height: 20px;
+            fill: #0095f6;
+            display: inline-block;
         }
 
         p.bio {
@@ -149,48 +202,137 @@
             overflow-y: auto;
             text-align: right;
         }
+
+        /* صفحة نبذة عني */
+        .about-card {
+            background: rgba(26, 26, 36, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            margin-top: 15px;
+            text-align: left;
+            direction: ltr;
+            line-height: 1.8;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        .about-card h3 {
+            color: #8a2be2;
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #8a2be2;
+            border-color: #8a2be2;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- الصورة الشخصية -->
-        <img class="profile-img" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
-
-        <!-- الاسم والوصف -->
-        <h1>QWS</h1>
-        <p class="bio">مرحباً في موقع QWS</p>
-
-        <!-- الأزرار والروابط -->
-        <div class="links-container">
-            <a href="https://t.me/qwqqh" target="_blank" class="link-btn">حسابي في Telegram</a>
-            <a href="https://www.tiktok.com/@www.google.org" target="_blank" class="link-btn">حسابي في TikTok</a>
-            <a href="https://discord.com/users/sx_sz" target="_blank" class="link-btn">حسابي في Discord (sx_sz)</a>
-            <a href="https://github.com/Q3WS" target="_blank" class="link-btn">حسابي في GitHub</a>
+        <!-- زر الانتقال بين الصفحات في الأعلى -->
+        <div class="top-nav-btn" onclick="togglePage()" title="نبذة عني">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
         </div>
 
-        <!-- قسم التقييم بالنجوم -->
-        <div class="rating-section">
-            <div class="rating-title">قيم موقع QWS</div>
-            <div class="stars" id="starContainer">
-                <span class="star" onclick="setRating(1)">★</span>
-                <span class="star" onclick="setRating(2)">★</span>
-                <span class="star" onclick="setRating(3)">★</span>
-                <span class="star" onclick="setRating(4)">★</span>
-                <span class="star" onclick="setRating(5)">★</span>
+        <!-- الصفحة الرئيسية -->
+        <div id="mainPage" class="page">
+            <!-- الصورة الشخصية -->
+            <img class="profile-img" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
+
+            <!-- الاسم مع علامة التوثيق -->
+            <div class="name-wrapper">
+                <h1>QWS</h1>
+                <svg class="verify-badge" viewBox="0 0 24 24">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7l-3.8-3.8 1.4-1.4 2.4 2.4 6-6 1.4 1.4-7.4 7.4z"/>
+                </svg>
+            </div>
+            <p class="bio">مرحباً في موقع QWS</p>
+
+            <!-- الأزرار والروابط -->
+            <div class="links-container">
+                <a href="https://t.me/qwqqh" target="_blank" class="link-btn">حسابي في Telegram</a>
+                <a href="https://www.tiktok.com/@www.google.org" target="_blank" class="link-btn">حسابي في TikTok</a>
+                <a href="https://discord.com/users/sx_sz" target="_blank" class="link-btn">حسابي في Discord (sx_sz)</a>
+                <a href="https://github.com/Q3WS" target="_blank" class="link-btn">حسابي في GitHub</a>
             </div>
 
-            <button class="rating-btn" onclick="submitRating()">إرسال التقييم</button>
-            <button class="rating-btn" style="background: rgba(255,255,255,0.1);" onclick="toggleReviews()">عرض التقييمات</button>
+            <!-- قسم التقييم بالنجوم -->
+            <div class="rating-section">
+                <div class="rating-title">قيم موقع QWS</div>
+                <div class="stars" id="starContainer">
+                    <span class="star" onclick="setRating(1)">★</span>
+                    <span class="star" onclick="setRating(2)">★</span>
+                    <span class="star" onclick="setRating(3)">★</span>
+                    <span class="star" onclick="setRating(4)">★</span>
+                    <span class="star" onclick="setRating(5)">★</span>
+                </div>
 
-            <div class="reviews-display" id="reviewsBox">
-                <p>⭐ متوسط التقييمات: <span id="avgRating">5.0</span> / 5</p>
-                <p style="font-size: 12px; margin-top: 5px; color: #888;">إجمالي التقييمات المخزنة: <span id="totalCount">1</span></p>
+                <button class="rating-btn" onclick="submitRating()">إرسال التقييم</button>
+                <button class="rating-btn" style="background: rgba(255,255,255,0.1);" onclick="toggleReviews()">عرض التقييمات</button>
+
+                <div class="reviews-display" id="reviewsBox">
+                    <p>⭐ متوسط التقييمات: <span id="avgRating">5.0</span> / 5</p>
+                    <p style="font-size: 12px; margin-top: 5px; color: #888;">إجمالي التقييمات المخزنة: <span id="totalCount">1</span></p>
+                </div>
             </div>
+        </div>
+
+        <!-- صفحة نبذة عني -->
+        <div id="aboutPage" class="page hidden">
+            <img class="profile-img" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
+            
+            <div class="name-wrapper">
+                <h1>QWS</h1>
+                <svg class="verify-badge" viewBox="0 0 24 24">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7l-3.8-3.8 1.4-1.4 2.4 2.4 6-6 1.4 1.4-7.4 7.4z"/>
+                </svg>
+            </div>
+
+            <div class="about-card">
+                <h3>Identification</h3>
+                <p>Hello, this is QWS website.</p>
+                <p><strong>Name:</strong> Muhammad</p>
+                <p><strong>Nation:</strong> SA - DZ 🇸🇦 🇩🇿</p>
+                <p><strong>Age:</strong> 16</p>
+                <p style="margin-top: 10px; color: #ffca28;"><em>The best is yet to come, بإذن الله.</em></p>
+            </div>
+
+            <button class="back-btn" onclick="togglePage()">الرجوع للرئيسية</button>
         </div>
     </div>
 
     <script>
+        function togglePage() {
+            const mainPage = document.getElementById('mainPage');
+            const aboutPage = document.getElementById('aboutPage');
+
+            if (mainPage.classList.contains('hidden')) {
+                mainPage.classList.remove('hidden');
+                aboutPage.classList.add('hidden');
+            } else {
+                mainPage.classList.add('hidden');
+                aboutPage.classList.remove('hidden');
+            }
+        }
+
         let currentRating = 0;
 
         function setRating(rating) {
