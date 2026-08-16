@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>موقع ألعاب QWS</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body { background: #121214; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .container { width: 100%; max-width: 400px; background: #1e1e24; padding: 20px; border-radius: 16px; border: 1px solid #8a2be2; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .container { width: 100%; max-width: 380px; background: #1e1e24; padding: 20px; border-radius: 16px; border: 1px solid #8a2be2; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
         .screen { display: none; }
         .screen.active { display: block; }
         .btn { background: #8a2be2; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; width: 100%; margin-top: 10px; }
@@ -33,7 +33,7 @@
 
         <!-- 2. شاشة الحسابات -->
         <div id="authScreen" class="screen">
-            <div style="margin-bottom: 15px;">
+            <div style="margin-bottom: 15px; display: flex; justify-content: space-between;">
                 <span id="tabLoginBtn" class="tab-btn tab-active" onclick="switchAuthTab('login')">تسجيل دخول</span>
                 <span id="tabRegBtn" class="tab-btn" onclick="switchAuthTab('reg')">حساب جديد</span>
             </div>
@@ -45,7 +45,7 @@
                 <button class="btn" onclick="handleLogin()">دخول</button>
             </div>
 
-            <!-- حساب جديد -->
+            <!-- جديد -->
             <div id="regForm" style="display:none;">
                 <input type="text" id="regId" readonly style="background:#1a1a20; color:#a855f7; font-weight:bold;">
                 <button class="btn btn-alt" style="margin-top:0; margin-bottom:10px; font-size:12px; padding:8px;" onclick="generateAutoId()">توليد معرف آخر 🎲</button>
@@ -381,5 +381,5 @@
         };
     </script>
 </body>
-</html>
+    </html>
 
