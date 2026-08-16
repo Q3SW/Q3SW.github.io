@@ -3,403 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QWS | Official Profile</title>
+    <title>موقع ألعاب QWS الاحترافي</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body {
-            background: #090d16;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://i.ibb.co/gMz0BG4p/background.jpg') no-repeat center center fixed;
+            background-size: cover; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px;
         }
-
-        /* الخلفية المتوهجة */
-        .glow-1, .glow-2 {
-            position: fixed;
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            filter: blur(90px);
-            z-index: 1;
-        }
-        .glow-1 {
-            background: #8a2be2;
-            top: 10%;
-            right: 10%;
-        }
-        .glow-2 {
-            background: #ec4899;
-            bottom: 10%;
-            left: 10%;
-        }
-
         .container {
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 30px 20px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            position: relative;
-            z-index: 2;
+            width: 100%; max-width: 460px; background: rgba(18, 18, 24, 0.95); padding: 20px; border-radius: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; position: relative;
+        }
+        .hidden { display: none !important; }
+        .btn {
+            background: #8a2be2; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px;
+            cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s;
+        }
+        .btn:hover { background: #a855f7; transform: scale(1.02); }
+        .btn-alt { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+        input {
+            width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #8a2be2;
+            background: #000; color: #fff; text-align: center; font-size: 14px;
+        }
+        .header {
+            display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05);
+            padding: 10px 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(138,43,226,0.3);
+        }
+        .user-box { display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: right; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #8a2be2; }
+        .badge { background: #ffca28; color: #000; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
+        
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .cell {
+            height: 80px; background: rgba(255,255,255,0.05); border: 2px solid rgba(138,43,226,0.3);
+            border-radius: 10px; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        .top-nav-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .chat-box {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(138,43,226,0.3); border-radius: 10px;
+            padding: 10px; height: 120px; overflow-y: auto; text-align: right; font-size: 12px; margin-bottom: 8px;
         }
+        .chat-msg { margin-bottom: 5px; line-height: 1.3; }
+        .chat-input-group { display: flex; gap: 5px; }
 
-        .top-nav-btn:hover {
-            background: #8a2be2;
-            border-color: #8a2be2;
-            transform: scale(1.1);
+        .item-card {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center; font-size: 13px; text-align: right;
         }
-
-        .top-nav-btn svg {
-            width: 22px;
-            height: 22px;
-            fill: #ffffff;
-        }
-
-        .page {
-            display: block;
-        }
-
-        .page.hidden {
-            display: none;
-        }
-
-        .profile-img {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 3px solid #8a2be2;
-            object-fit: cover;
-            margin: 10px auto 15px auto;
-            display: block;
-            box-shadow: 0 0 25px rgba(138, 43, 226, 0.6);
-        }
-
-        .name-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
-            direction: ltr;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: #ffffff;
-        }
-
-        .verify-badge {
-            width: 20px;
-            height: 20px;
-            fill: #1d9bf0;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        p.bio {
-            font-size: 14px;
-            color: #d1d1d1;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .link-btn {
-            display: block;
-            background: rgba(255, 255, 255, 0.08);
-            color: #ffffff;
-            text-decoration: none;
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .link-btn:hover {
-            background: #ffffff;
-            color: #090d16;
-            border-color: #ffffff;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .rating-section {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-            margin-top: 10px;
-        }
-
-        .rating-title {
-            font-size: 15px;
-            margin-bottom: 10px;
-            color: #e0e0e0;
-        }
-
-        .stars {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 15px;
-            direction: ltr;
-        }
-
-        .star {
-            font-size: 28px;
-            color: #444;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .star.active, .star:hover {
-            color: #ffca28;
-        }
-
-        .rating-btn {
-            background: #8a2be2;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            transition: 0.3s;
-            margin: 4px;
-        }
-
-        .rating-btn:hover {
-            background: #6a1b9a;
-        }
-
-        .reviews-display {
-            display: none;
-            margin-top: 15px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            color: #b3b3b3;
-            max-height: 120px;
-            overflow-y: auto;
-            text-align: right;
-        }
-
-        .about-card {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 15px;
-            text-align: left;
-            direction: ltr;
-            line-height: 1.8;
-            color: #e0e0e0;
-            font-size: 14px;
-        }
-
-        .about-card h3 {
-            color: #8a2be2;
-            margin-bottom: 10px;
-            font-size: 16px;
-            text-align: center;
-        }
-
-        .back-btn {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .back-btn:hover {
-            background: #8a2be2;
-            border-color: #8a2be2;
-        }
+        .settings-btn { position: absolute; top: 15px; left: 15px; cursor: pointer; font-size: 20px; }
+        .streak-fire { color: #ff4500; font-weight: bold; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div class="glow-1"></div>
-    <div class="glow-2"></div>
-
     <div class="container">
-        <div class="top-nav-btn" onclick="togglePage()" title="نبذة عني">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-            </svg>
+        <div class="settings-btn" onclick="showSettings()">⚙️</div>
+
+        <!-- 1. شاشة البداية -->
+        <div id="startScreen">
+            <h2 style="margin-bottom:15px;">مرحباً في موقع ألعاب QWS</h2>
+            <button class="btn" onclick="goToAuth()">متابعة</button>
         </div>
 
-        <!-- الصفحة الرئيسية -->
-        <div id="mainPage" class="page">
-            <img class="profile-img" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
-
-            <div class="name-wrapper">
-                <h1>QWS</h1>
-                <svg class="verify-badge" viewBox="0 0 24 24">
-                    <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238 1.05 1.273 2.42 2.148 4 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-1.05 2.148-2.42 2.148-4zM9.9 16.8L5.7 12.6l1.4-1.4 2.8 2.8 7.4-7.4 1.4 1.4-8.8 8.8z"/>
-                </svg>
-            </div>
-            <p class="bio">مرحباً في موقع QWS</p>
-
-            <div class="links-container">
-                <a href="https://t.me/qwqqh" target="_blank" class="link-btn">حسابي في Telegram</a>
-                <a href="https://www.tiktok.com/@www.google.org" target="_blank" class="link-btn">حسابي في TikTok</a>
-                <a href="https://discord.com/users/sx_sz" target="_blank" class="link-btn">حسابي في Discord (sx_sz)</a>
-                <a href="https://github.com/Q3WS" target="_blank" class="link-btn">حسابي في GitHub</a>
-            </div>
-
-            <div class="rating-section">
-                <div class="rating-title">قيم موقع QWS</div>
-                <div class="stars" id="starContainer">
-                    <span class="star" onclick="setRating(1)">★</span>
-                    <span class="star" onclick="setRating(2)">★</span>
-                    <span class="star" onclick="setRating(3)">★</span>
-                    <span class="star" onclick="setRating(4)">★</span>
-                    <span class="star" onclick="setRating(5)">★</span>
-                </div>
-
-                <button class="rating-btn" onclick="submitRating()">إرسال التقييم</button>
-                <button class="rating-btn" style="background: rgba(255,255,255,0.1);" onclick="toggleReviews()">عرض التقييمات</button>
-
-                <div class="reviews-display" id="reviewsBox">
-                    <p>⭐ متوسط التقييمات: <span id="avgRating">5.0</span> / 5</p>
-                    <p style="font-size: 12px; margin-top: 5px; color: #888;">إجمالي التقييمات المخزنة: <span id="totalCount">1</span></p>
-                </div>
-            </div>
+        <!-- 2. شاشة التسجيل -->
+        <div id="authScreen" class="hidden">
+            <h2>حساب اللاعب</h2>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">أدخل المعرف وكلمة السر</p>
+            <input type="number" id="accId" placeholder="المعرف (مثال: 838291729)">
+            <input type="password" id="accPass" placeholder="كلمة السر">
+            <button class="btn" onclick="loginOrRegister()">تسجيل الدخول / إنشاء حساب</button>
         </div>
 
-        <!-- صفحة نبذة عني -->
-        <div id="aboutPage" class="page hidden">
-            <img class="profile-img" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
+        <!-- 3. شاشة الترحيب المخصصة -->
+        <div id="welcomeScreen" class="hidden">
+            <h2 id="welcomeText">مرحبا في موقع العاب QWS</h2>
+            <button class="btn" onclick="showDashboard()">متابعة للرئيسية</button>
+        </div>
+
+        <!-- 4. القائمة الرئيسية -->
+        <div id="dashScreen" class="hidden">
+            <div class="header">
+                <div class="user-box" onclick="showProfile()">
+                    <img class="avatar" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
+                    <div>
+                        <div style="font-weight:bold; font-size:13px;"><span id="uBadge"></span> ID: <span id="uId"></span></div>
+                        <div style="font-size:11px; color:#a855f7;">الليفل: <span id="uLvl">1</span> | فخر: <span id="uHonor">0</span> <span id="uStreak" class="streak-fire"></span></div>
+                    </div>
+                </div>
+                <div class="badge">🏆 <span id="uPts">0</span> نقطة</div>
+            </div>
+
+            <button class="btn" onclick="startXO(false)">لعبة XO (ضد روبوت)</button>
+            <button class="btn btn-alt" onclick="showRoomMenu()">لعب ضد صديق (نظام الغرف ⚔️)</button>
+            <button class="btn btn-alt" style="background:#059669;" onclick="spinWheel()">عجلة الحظ 🎡 (كل يومين)</button>
+            <button class="btn btn-alt" onclick="showShop()">المتجر 🛒</button>
             
-            <div class="name-wrapper">
-                <h1>QWS</h1>
-                <svg class="verify-badge" viewBox="0 0 24 24">
-                    <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238 1.05 1.273 2.42 2.148 4 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-1.05 2.148-2.42 2.148-4zM9.9 16.8L5.7 12.6l1.4-1.4 2.8 2.8 7.4-7.4 1.4 1.4-8.8 8.8z"/>
-                </svg>
+            <!-- الشات العام -->
+            <div style="margin-top:15px; text-align:right;">
+                <p style="font-size:12px; color:#a855f7; font-weight:bold; margin-bottom:5px;">💬 الشات العام:</p>
+                <div class="chat-box" id="globalChatBox"></div>
+                <div class="chat-input-group">
+                    <input type="text" id="globalInput" placeholder="اكتب رسالة عامة..." style="margin-bottom:0;">
+                    <button class="btn" style="width:auto; padding:0 15px; margin-top:0;" onclick="sendGlobalMsg()">إرسال</button>
+                </div>
             </div>
 
-            <div class="about-card">
-                <h3>Identification</h3>
-                <p>Hello, this is QWS website.</p>
-                <p><strong>Name:</strong> Muhammad</p>
-                <p><strong>Nation:</strong> SA - DZ 🇸🇦 🇩🇿</p>
-                <p><strong>Age:</strong> 16</p>
-                <p style="margin-top: 10px; color: #ffca28;"><em>The best is yet to come | بإذن الله</em></p>
-            </div>
-
-            <button class="back-btn" onclick="togglePage()">الرجوع للرئيسية</button>
+            <button class="btn btn-alt" style="background:#b91c1c; margin-top:15px;" onclick="logout()">تسجيل الخروج</button>
         </div>
+
+        <!-- 5. قائمة الغرف التنافسية -->
+        <div id="roomMenuScreen" class="hidden">
+            <h3>لعب ضد صديق ⚔️</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">أنشئ غرفة أو انضم لغرفة صديقك</p>
+            <input type="text" id="roomNameInput" placeholder="اسم الغرفة">
+            <input type="password" id="roomPassInput" placeholder="كلمة سر الغرفة">
+            <button class="btn" onclick="createRoom()">إنشاء غرفة جديدة</button>
+            <button class="btn btn-alt" onclick="joinRoom()">بحث وانضمام للغرفة</button>
+            <button class="btn btn-alt" onclick="showDashboard()">الرجوع</button>
+        </div>
+
+        <!-- 6. شاشة لعبة XO -->
+        <div id="xoScreen" class="hidden">
+            <h3 id="xoTitle">لعبة XO <span id="botDiff" style="font-size:12px; color:#ffca28;"></span></h3>
+            <p id="xoStatus" style="margin:8px 0; font-size:14px;">دور اللاعب الأول (X)</p>
+
+            <div class="board">
+                <div class="cell" onclick="playMove(0)"></div>
+                <div class="cell" onclick="playMove(1)"></div>
+                <div class="cell" onclick="playMove(2)"></div>
+                <div class="cell" onclick="playMove(3)"></div>
+                <div class="cell" onclick="playMove(4)"></div>
+                <div class="cell" onclick="playMove(5)"></div>
+                <div class="cell" onclick="playMove(6)"></div>
+                <div class="cell" onclick="playMove(7)"></div>
+                <div class="cell" onclick="playMove(8)"></div>
+            </div>
+
+            <!-- شات الغرفة الخاص -->
+            <div id="roomChatContainer" class="hidden" style="text-align:right; margin-bottom:10px;">
+                <p style="font-size:11px; color:#ffca28;">💬 شات الغرفة الخاص:</p>
+                <div class="chat-box" id="roomChatBox" style="height:80px;"></div>
+                <div class="chat-input-group">
+                    <input type="text" id="roomInput" placeholder="رسالة للصديق..." style="margin-bottom:0;">
+                    <button class="btn" style="width:auto; padding:0 12px; margin-top:0;" onclick="sendRoomMsg()">إرسال</button>
+                </div>
+            </div>
+
+            <button class="btn btn-alt" onclick="resetXO()">إعادة اللعب</button>
+            <button class="btn" onclick="showDashboard()">الرجوع للرئيسية</button>
+        </div>
+
+        <!-- 7. البروفايل -->
+        <div id="profileScreen" class="hidden">
+            <h3>تفاصيل البروفايل والإحصائيات</h3>
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin:15px 0; text-align:right; font-size:13px;">
+                <p><strong>المعرف:</strong> <span id="pId"></span></p>
+                <p><strong>المستوى (الليفل):</strong> <span id="pLvl"></span></p>
+                <p><strong>درجة الفخر:</strong> <span id="pHonor"></span></p>
+                <p><strong>الشارة الحالية:</strong> <span id="pBadge">لا يوجد</span></p>
+                <p><strong>مضاعف النقاط:</strong> <span id="pMulti">1x</span></p>
+                <hr style="border:0.5px solid rgba(255,255,255,0.1); margin:10px 0;">
+                <p style="color:#ffca28; font-weight:bold; margin-bottom:5px;">📊 إحصائيات مبارياتك:</p>
+                <p>🏆 الانتصارات: <span id="pWins">0</span></p>
+                <p>💔 الهزائم: <span id="pLosses">0</span></p>
+                <p>🤝 التعادلات: <span id="pDraws">0</span></p>
+            </div>
+            <button class="btn" onclick="showDashboard()">الرجوع للرئيسية</button>
+        </div>
+
+        <!-- 8. المتجر -->
+        <div id="shopScreen" class="hidden">
+            <h3>المتجر 🛒</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:10px;">نقاطك: <span id="shopPts">0</span></p>
+
+            <h4 style="text-align:right; margin:10px 0; color:#8a2be2;">شاشات الترحيب:</h4>
+            <div class="item-card"><div>نجم مبارز (20 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyWelcome(20, 'مرحبا ايها نجم مبارز في موقع العاب QWS')">شراء</button></div>
+            <div class="item-card"><div>نجمنا الكبير (50 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyWelcome(50, 'اهلا وسهلا يانجمنا كبير في موقع العاب QWS سعدنا بلقائك')">شراء</button></div>
+            <div class="item-card"><div>شاشة خاصة مخصصة (300 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyCustomWelcome()">شراء وتخصيص</button></div>
+
+            <h4 style="text-align:right; margin:10px 0; color:#8a2be2;">النغمات:</h4>
+            <div class="item-card"><div>نغمة هادئة (10 نقاط)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyTone(10, 'calm')">شراء</button></div>
+            <div class="item-card"><div>نغمة ناجح (50 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyTone(50, 'success')">شراء</button></div>
+            <div class="item-card"><div>نغمة محارب (60 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyTone(60, 'warrior')">شراء</button></div>
+
+            <h4 style="text-align:right; margin:10px 0; color:#8a2be2;">الميزات:</h4>
+            <div class="item-card"><div>مضاعف النقاط 2x (100 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyDouble()">شراء</button></div>
+
+            <button class="btn" onclick="showDashboard()">الرجوع للرئيسية</button>
+        </div>
+
+        <!-- 9. الإعدادات للأكواد -->
+        <div id="settingsScreen" class="hidden">
+            <h3>الإعدادات والأكواد ⚙️</h3>
+            <button class="btn btn-alt" style="margin:15px 0;" onclick="toggleAudioSetting()">تغيير حالة الصوت 🔔</button>
+            <h4 style="text-align:right; color:#8a2be2; margin-bottom:5px;">استرداد الأكواد 🎁:</h4>
+            <input type="text" id="codePassInput" placeholder="أدخل الكود هنا">
+            <button class="btn" onclick="claimCode()">تأكيد الكود</button>
+            <button class="btn btn-alt" style="margin-top:15px;" onclick="showDashboard()">الرجوع</button>
+        </div>
+
     </div>
 
     <script>
-        function togglePage() {
-            const mainPage = document.getElementById('mainPage');
-            const aboutPage = document.getElementById('aboutPage');
+        let audioEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-            if (mainPage.classList.contains('hidden')) {
-                mainPage.classList.remove('hidden');
-                aboutPage.classList.add('hidden');
+        function playSound(type) {
+            if (!audioEnabled) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+
+            let tone = user.selectedTone || 'default';
+            if (type === 'win') {
+                let freq = tone === 'warrior' ? 600 : tone === 'success' ? 523 : tone === 'calm' ? 350 : 440;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + 0.3);
             } else {
-                mainPage.classList.add('hidden');
-                aboutPage.classList.remove('hidden');
+                osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
             }
+            gain.gain.fadeOut(0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.4);
         }
 
-        let currentRating = 0;
-
-        function setRating(rating) {
-            currentRating = rating;
-            const stars = document.querySelectorAll('.star');
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.add('active');
-                } else {
-                    star.classList.remove('active');
-                }
-            });
+        function triggerConfetti() {
+            if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
-        function submitRating() {
-            if (currentRating === 0) {
-                alert('يرجى تحديد عدد النجوم أولاً!');
-                return;
+        let user = JSON.parse(localStorage.getItem('qws_active_user')) || null;
+        let winStreak = 0;
+        let isFriendMode = false;
+        let currentPlayer = "X";
+        let activeRoomName = "";
+
+        function goToAuth() {
+            if (user) { showWelcome(); } 
+            else { hideAll(); document.getElementById('authScreen').classList.remove('hidden'); }
+        }
+
+        function loginOrRegister() {
+            const id = document.getElementById('accId').value;
+            const pass = document.getElementById('accPass').value;
+            if (!id || !pass) return alert('اكتب المعرف وكلمة السر!');
+
+            user = {
+                id: id, pass: pass, pts: 0, honor: 0, lvl: 1, 
+                winsCount: 0, lossesCount: 0, drawsCount: 0, winWinsProgress: 0,
+                welcomeMsg: 'مرحبا في موقع العاب QWS', selectedTone: 'default',
+                multiplier: 1, claimedLvlRewards: [], claimedCodes: [], lastWheelTime: 0
+            };
+            saveData(); showWelcome();
+        }
+
+        function showWelcome() {
+            hideAll();
+            document.getElementById('welcomeText').innerText = user.welcomeMsg;
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+
+        function showDashboard() {
+            hideAll(); updateUI(); renderGlobalChat();
+            document.getElementById('dashScreen').classList.remove('hidden');
+        }
+
+        function updateUI() {
+            let b = '';
+            if (user.lvl >= 80) b = '♾️ لا نهائي';
+            else if (user.lvl >= 50) b = '⭐ نجم أسطوري';
+            else if (user.lvl >= 30) b = '🥇 مخضرم';
+            else if (user.lvl >= 15) b = '🥉 محارب';
+
+            document.getElementById('uId').innerText = user.id;
+            document.getElementById('uLvl').innerText = user.lvl;
+            document.getElementById('uHonor').innerText = user.honor;
+            document.getElementById('uPts').innerText = user.pts;
+            document.getElementById('uBadge').innerText = b;
+            document.getElementById('uStreak').innerText = winStreak > 0 ? `🔥 ${winStreak}` : '';
+
+            document.getElementById('pId').innerText = user.id;
+            document.getElementById('pLvl').innerText = user.lvl;
+            document.getElementById('pHonor').innerText = user.honor;
+            document.getElementById('pBadge').innerText = b || 'لا يوجد';
+            document.getElementById('pMulti').innerText = user.multiplier + 'x';
+            document.getElementById('pWins').innerText = user.winsCount || 0;
+            document.getElementById('pLosses').innerText = user.lossesCount || 0;
+            document.getElementById('pDraws').innerText = user.drawsCount || 0;
+            document.getElementById('shopPts').innerText = user.pts;
+        }
+
+        /* نظام عجلة الحظ كل يومين */
+        function spinWheel() {
+            const now = Date.now();
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
+            if (user.lastWheelTime && (now - user.lastWheelTime < twoDaysInMs)) {
+                const remainingHours = Math.ceil((twoDaysInMs - (now - user.lastWheelTime)) / (1000 * 60 * 60));
+                return alert(`عجلة الحظ مجهزة بالكامل! يمكنك التدوير مجدداً بعد ${remainingHours} ساعة.`);
             }
+
+            const rand = Math.random() * 100;
+            let resultMsg = "";
+
+            if (rand < 70) {
+                user.pts += 5; resultMsg = "🎉 حصلت على 5 نقاط!";
+            } else if (rand < 90) {
+                user.pts += 8; resultMsg = "🎉 حصلت على 8 نقاط!";
+            } else if (rand < 98) {
+                user.pts += 20; resultMsg = "🔥 رائع! حصلت على 20 نقطة!";
+            } else {
+                user.selectedTone = 'success'; resultMsg = "🌟 جائزة كبرى أسطورية! حصلت على نغمة (محظوظ ناجح) مجاناً!";
+            }
+
+            user.lastWheelTime = now;
+            saveData(); updateUI();
+            alert(resultMsg);
+        }
+
+        /* نظام الشات العام وشات الغرفة */
+        function sendGlobalMsg() {
+            let input = document.getElementById('globalInput');
+            if(!input.value.trim()) return;
+            let msgs = JSON.parse(localStorage.getItem('qws_global_chat')) || [];
+            msgs.push({ id: user.id, text: input.value.trim() });
+            localStorage.setItem('qws_global_chat', JSON.stringify(msgs));
+            input.value = ''; renderGlobalChat();
+        }
+
+        function renderGlobalChat() {
+            let msgs = JSON.parse(localStorage.getItem('qws_global_chat')) || [];
+            let box = document.getElementById('globalChatBox');
+            box.innerHTML = msgs.slice(-15).map(m => `<div class="chat-msg"><strong style="color:#a855f7;">${m.id}:</strong> ${m.text}</div>`).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendRoomMsg() {
+            let input = document.getElementById('roomInput');
+            if(!input.value.trim()) return;
+            let msgs = JSON.parse(localStorage.getItem(`qws_room_chat_${activeRoomName}`)) || [];
+            msgs.push({ id: user.id, text: input.value.trim() });
+            localStorage.setItem(`qws_room_chat_${activeRoomName}`, JSON.stringify(msgs));
+            input.value = ''; renderRoomChat();
+        }
+
+        function renderRoomChat() {
+            let msgs = JSON.parse(localStorage.getItem(`qws_room_chat_${activeRoomName}`)) || [];
+            let box = document.getElementById('roomChatBox');
+            box.innerHTML = msgs.slice(-10).map(m => `<div class="chat-msg"><strong style="color:#ffca28;">${m.id}:</strong> ${m.text}</div>`).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        /* نظام الغرف والتحدي */
+        function showRoomMenu() { hideAll(); document.getElementById('roomMenuScreen').classList.remove('hidden'); }
+
+        function createRoom() {
+            let rName = document.getElementById('roomNameInput').value;
+            let rPass = document.getElementById('roomPassInput').value;
+            if(!rName || !rPass) return alert('اكتب اسم الغرفة وكلمة السر!');
             
-            let savedRatings = JSON.parse(localStorage.getItem('qws_ratings')) || [5];
-            savedRatings.push(currentRating);
-            localStorage.setItem('qws_ratings', JSON.stringify(savedRatings));
-
-            alert('شكراً لك! تم إرسال تقييمك بـ ' + currentRating + ' نجوم.');
-            updateReviews();
-        }
-
-        function toggleReviews() {
-            const box = document.getElementById('reviewsBox');
-            if (box.style.display === 'block') {
-                box.style.display = 'none';
-            } else {
-                box.style.display = 'block';
-                updateReviews();
-            }
-        }
-
-        function updateReviews() {
-            let savedRatings = JSON.parse(localStorage.getItem('qws_ratings')) || [5];
-            let sum = savedRatings.reduce((a, b) => a + b, 0);
-            let avg = (sum / savedRatings.length).toFixed(1);
-
-            document.getElementById('avgRating').innerText = avg;
-            document.getElementById('totalCount').innerText = savedRatings.length;
-        }
-    </script>
-
-</body>
-</html>
+            let rooms = JSON.parse(localStorage.getItem('qws_rooms')) || {};
+            rooms[rName] = rPass;
+            localStorage.setItem('qws_rooms', JSON.strin
