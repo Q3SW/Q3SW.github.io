@@ -3,364 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع ألعاب QWS الاحترافي</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>موقع ألعاب QWS</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body {
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://i.ibb.co/gMz0BG4p/background.jpg') no-repeat center center fixed;
-            background-size: cover; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px;
-        }
-        .container {
-            width: 100%; max-width: 460px; background: rgba(18, 18, 24, 0.95); padding: 20px; border-radius: 20px;
-            border: 1px solid rgba(138, 43, 226, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; position: relative;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: #121214; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        .container { width: 100%; max-width: 420px; background: #1e1e24; padding: 20px; border-radius: 16px; border: 1px solid #8a2be2; text-align: center; }
         .hidden { display: none !important; }
-        .btn {
-            background: #8a2be2; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px;
-            cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s;
-        }
-        .btn:hover { background: #a855f7; transform: scale(1.02); }
-        .btn-alt { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
-        input {
-            width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #8a2be2;
-            background: #000; color: #fff; text-align: center; font-size: 14px;
-        }
-        .header {
-            display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05);
-            padding: 10px 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(138,43,226,0.3);
-        }
-        .user-box { display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: right; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #8a2be2; }
-        .badge { background: #ffca28; color: #000; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
-        
+        .btn { background: #8a2be2; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-alt { background: #2a2a32; border: 1px solid #444; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #8a2be2; background: #000; color: #fff; text-align: center; }
+        .card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; text-align: right; display: flex; justify-content: space-between; align-items: center; }
         .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
-        .cell {
-            height: 80px; background: rgba(255,255,255,0.05); border: 2px solid rgba(138,43,226,0.3);
-            border-radius: 10px; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-
-        .chat-box {
-            background: rgba(0,0,0,0.5); border: 1px solid rgba(138,43,226,0.3); border-radius: 10px;
-            padding: 10px; height: 120px; overflow-y: auto; text-align: right; font-size: 12px; margin-bottom: 8px;
-        }
-        .chat-msg { margin-bottom: 5px; line-height: 1.3; }
-        .chat-input-group { display: flex; gap: 5px; }
-
-        .item-card {
-            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 8px;
-            display: flex; justify-content: space-between; align-items: center; font-size: 13px; text-align: right;
-        }
-        .settings-btn { position: absolute; top: 15px; left: 15px; cursor: pointer; font-size: 20px; }
-        .streak-fire { color: #ff4500; font-weight: bold; font-size: 13px; }
+        .cell { height: 75px; background: #2a2a32; border-radius: 8px; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #a855f7; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="settings-btn" onclick="showSettings()">⚙️</div>
-
-        <!-- 1. شاشة البداية -->
+        <!-- 1. الشاشة الأولى -->
         <div id="startScreen">
-            <h2 style="margin-bottom:15px;">مرحباً في موقع ألعاب QWS</h2>
-            <button class="btn" onclick="goToAuth()">متابعة</button>
+            <h2 style="margin-bottom:15px;">مرحباً في موقع ألعاب QWS ⚙️</h2>
+            <button class="btn" onclick="showWelcomeOrAuth()">متابعة</button>
         </div>
 
         <!-- 2. شاشة التسجيل -->
         <div id="authScreen" class="hidden">
-            <h2>حساب اللاعب</h2>
-            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">أدخل المعرف وكلمة السر</p>
-            <input type="number" id="accId" placeholder="المعرف (مثال: 838291729)">
+            <h3>تسجيل الحساب</h3>
+            <p style="font-size:12px; color:#aaa; margin: 10px 0;">أدخل المعرف وكلمة السر</p>
+            <input type="number" id="accId" placeholder="المعرف (ID)">
             <input type="password" id="accPass" placeholder="كلمة السر">
-            <button class="btn" onclick="loginOrRegister()">تسجيل الدخول / إنشاء حساب</button>
+            <button class="btn" onclick="login()">إنشاء حساب / دخول</button>
         </div>
 
         <!-- 3. شاشة الترحيب المخصصة -->
         <div id="welcomeScreen" class="hidden">
-            <h2 id="welcomeText">مرحبا في موقع العاب QWS</h2>
-            <button class="btn" onclick="showDashboard()">متابعة للرئيسية</button>
+            <h3 id="welcomeText" style="margin-bottom:15px;"></h3>
+            <button class="btn" onclick="showScreen('dashScreen')">متابعة للرئيسية</button>
         </div>
 
-        <!-- 4. القائمة الرئيسية -->
+        <!-- 4. الرئيسية -->
         <div id="dashScreen" class="hidden">
-            <div class="header">
-                <div class="user-box" onclick="showProfile()">
-                    <img class="avatar" src="https://i.ibb.co/ZpyBD46y/profile.jpg" alt="QWS">
-                    <div>
-                        <div style="font-weight:bold; font-size:13px;"><span id="uBadge"></span> ID: <span id="uId"></span></div>
-                        <div style="font-size:11px; color:#a855f7;">الليفل: <span id="uLvl">1</span> | فخر: <span id="uHonor">0</span> <span id="uStreak" class="streak-fire"></span></div>
-                    </div>
-                </div>
-                <div class="badge">🏆 <span id="uPts">0</span> نقطة</div>
+            <div style="background:rgba(138,43,226,0.1); padding:10px; border-radius:10px; margin-bottom:15px; text-align:right;">
+                <p>👤 المعرف: <strong id="uId"></strong></p>
+                <p>⭐ الليفل: <strong id="uLvl">1</strong> | 🎖️ الشارة: <strong id="uBadge" style="color:#ffca28;">مبتدئ</strong></p>
+                <p>🏆 النقاط: <strong id="uPts">0</strong> | 🔥 الفخر: <strong id="uHonor">0</strong></p>
             </div>
 
-            <button class="btn" onclick="startXO(false)">لعبة XO (ضد روبوت)</button>
-            <button class="btn btn-alt" onclick="showRoomMenu()">لعب ضد صديق (نظام الغرف ⚔️)</button>
+            <button class="btn" onclick="startXO()">لعبة XO (ضد الروبوت)</button>
             <button class="btn btn-alt" style="background:#059669;" onclick="spinWheel()">عجلة الحظ 🎡 (كل يومين)</button>
             <button class="btn btn-alt" onclick="showShop()">المتجر 🛒</button>
-            
-            <!-- الشات العام -->
-            <div style="margin-top:15px; text-align:right;">
-                <p style="font-size:12px; color:#a855f7; font-weight:bold; margin-bottom:5px;">💬 الشات العام:</p>
-                <div class="chat-box" id="globalChatBox"></div>
-                <div class="chat-input-group">
-                    <input type="text" id="globalInput" placeholder="اكتب رسالة عامة..." style="margin-bottom:0;">
-                    <button class="btn" style="width:auto; padding:0 15px; margin-top:0;" onclick="sendGlobalMsg()">إرسال</button>
-                </div>
-            </div>
-
             <button class="btn btn-alt" style="background:#b91c1c; margin-top:15px;" onclick="logout()">تسجيل الخروج</button>
         </div>
 
-        <!-- 5. قائمة الغرف التنافسية -->
-        <div id="roomMenuScreen" class="hidden">
-            <h3>لعب ضد صديق ⚔️</h3>
-            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">أنشئ غرفة أو انضم لغرفة صديقك</p>
-            <input type="text" id="roomNameInput" placeholder="اسم الغرفة">
-            <input type="password" id="roomPassInput" placeholder="كلمة سر الغرفة">
-            <button class="btn" onclick="createRoom()">إنشاء غرفة جديدة</button>
-            <button class="btn btn-alt" onclick="joinRoom()">بحث وانضمام للغرفة</button>
-            <button class="btn btn-alt" onclick="showDashboard()">الرجوع</button>
-        </div>
-
-        <!-- 6. شاشة لعبة XO -->
-        <div id="xoScreen" class="hidden">
-            <h3 id="xoTitle">لعبة XO <span id="botDiff" style="font-size:12px; color:#ffca28;"></span></h3>
-            <p id="xoStatus" style="margin:8px 0; font-size:14px;">دور اللاعب الأول (X)</p>
-
-            <div class="board">
-                <div class="cell" onclick="playMove(0)"></div>
-                <div class="cell" onclick="playMove(1)"></div>
-                <div class="cell" onclick="playMove(2)"></div>
-                <div class="cell" onclick="playMove(3)"></div>
-                <div class="cell" onclick="playMove(4)"></div>
-                <div class="cell" onclick="playMove(5)"></div>
-                <div class="cell" onclick="playMove(6)"></div>
-                <div class="cell" onclick="playMove(7)"></div>
-                <div class="cell" onclick="playMove(8)"></div>
-            </div>
-
-            <!-- شات الغرفة الخاص -->
-            <div id="roomChatContainer" class="hidden" style="text-align:right; margin-bottom:10px;">
-                <p style="font-size:11px; color:#ffca28;">💬 شات الغرفة الخاص:</p>
-                <div class="chat-box" id="roomChatBox" style="height:80px;"></div>
-                <div class="chat-input-group">
-                    <input type="text" id="roomInput" placeholder="رسالة للصديق..." style="margin-bottom:0;">
-                    <button class="btn" style="width:auto; padding:0 12px; margin-top:0;" onclick="sendRoomMsg()">إرسال</button>
-                </div>
-            </div>
-
-            <button class="btn btn-alt" onclick="resetXO()">إعادة اللعب</button>
-            <button class="btn" onclick="showDashboard()">الرجوع للرئيسية</button>
-        </div>
-
-        <!-- 7. البروفايل -->
-        <div id="profileScreen" class="hidden">
-            <h3>تفاصيل البروفايل والإحصائيات</h3>
-            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin:15px 0; text-align:right; font-size:13px;">
-                <p><strong>المعرف:</strong> <span id="pId"></span></p>
-                <p><strong>المستوى (الليفل):</strong> <span id="pLvl"></span></p>
-                <p><strong>درجة الفخر:</strong> <span id="pHonor"></span></p>
-                <p><strong>الشارة الحالية:</strong> <span id="pBadge">لا يوجد</span></p>
-                <p><strong>مضاعف النقاط:</strong> <span id="pMulti">1x</span></p>
-                <hr style="border:0.5px solid rgba(255,255,255,0.1); margin:10px 0;">
-                <p style="color:#ffca28; font-weight:bold; margin-bottom:5px;">📊 إحصائيات مبارياتك:</p>
-                <p>🏆 الانتصارات: <span id="pWins">0</span></p>
-                <p>💔 الهزائم: <span id="pLosses">0</span></p>
-                <p>🤝 التعادلات: <span id="pDraws">0</span></p>
-            </div>
-            <button class="btn" onclick="showDashboard()">الرجوع للرئيسية</button>
-        </div>
-
-        <!-- 8. المتجر -->
+        <!-- 5. المتجر -->
         <div id="shopScreen" class="hidden">
             <h3>المتجر 🛒</h3>
-            <p style="font-size:12px; color:#aaa; margin-bottom:10px;">نقاطك: <span id="shopPts">0</span></p>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">نقاطك الحالية: <span id="shopPts">0</span></p>
 
-            <h4 style="text-align:right; margin:10px 0; color:#8a2be2;">شاشات الترحيب:</h4>
-            <div class="item-card"><div>نجم مبارز (20 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyWelcome(20, 'مرحبا ايها نجم مبارز في موقع العاب QWS')">شراء</button></div>
-            <div class="item-card"><div>نجمنا الكبير (50 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyWelcome(50, 'اهلا وسهلا يانجمنا كبير في موقع العاب QWS سعدنا بلقائك')">شراء</button></div>
-            <div class="item-card"><div>شاشة خاصة مخصصة (300 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyCustomWelcome()">شراء وتخصيص</button></div>
+            <div class="card">
+                <div>مضاعف النقاط 2x (100 نقطة)</div>
+                <button class="btn" style="width:auto; padding:5px 10px;" onclick="buyDouble()">شراء</button>
+            </div>
+            <div class="card">
+                <div>شاشة "نجم مبارز" (20 نقطة)</div>
+                <button class="btn" style="width:auto; padding:5px 10px;" onclick="buyWelcome(20, 'مرحباً بك يا نجم مبارز في موقع QWS!')">شراء</button>
+            </div>
+            <div class="card">
+                <div>شاشة "نجمنا الكبير" (50 نقطة)</div>
+                <button class="btn" style="width:auto; padding:5px 10px;" onclick="buyWelcome(50, 'أهلاً بك يا نجمنا الكبير في موقع QWS!')">شراء</button>
+            </div>
 
-            <h4 style="text-align:right; margin:10px 0; color:#8a2be2;">النغمات:</h4>
-            <div class="item-card"><div>نغمة هادئة (10 نقاط)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyTone(10, 'calm')">شراء</button></div>
-            <div class="item-card"><div>نغمة ناجح (50 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyTone(50, 'success')">شراء</button></div>
-            <div class="item-card"><div>نغمة محارب (60 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyTone(60, 'warrior')">شراء</button></div>
-
-            <h4 style="text-align:right; margin:10px 0; color:#8a2be2;">الميزات:</h4>
-            <div class="item-card"><div>مضاعف النقاط 2x (100 نقطة)</div><button class="btn" style="width:auto; padding:5px 10px;" onclick="buyDouble()">شراء</button></div>
-
-            <button class="btn" onclick="showDashboard()">الرجوع للرئيسية</button>
+            <button class="btn btn-alt" style="margin-top:15px;" onclick="showScreen('dashScreen')">الرجوع للرئيسية</button>
         </div>
 
-        <!-- 9. الإعدادات للأكواد -->
-        <div id="settingsScreen" class="hidden">
-            <h3>الإعدادات والأكواد ⚙️</h3>
-            <button class="btn btn-alt" style="margin:15px 0;" onclick="toggleAudioSetting()">تغيير حالة الصوت 🔔</button>
-            <h4 style="text-align:right; color:#8a2be2; margin-bottom:5px;">استرداد الأكواد 🎁:</h4>
-            <input type="text" id="codePassInput" placeholder="أدخل الكود هنا">
-            <button class="btn" onclick="claimCode()">تأكيد الكود</button>
-            <button class="btn btn-alt" style="margin-top:15px;" onclick="showDashboard()">الرجوع</button>
+        <!-- 6. لعبة XO -->
+        <div id="xoScreen" class="hidden">
+            <h3 id="xoStatus">دورك الان (X)</h3>
+            <div class="board">
+                <div class="cell" onclick="play(0)"></div>
+                <div class="cell" onclick="play(1)"></div>
+                <div class="cell" onclick="play(2)"></div>
+                <div class="cell" onclick="play(3)"></div>
+                <div class="cell" onclick="play(4)"></div>
+                <div class="cell" onclick="play(5)"></div>
+                <div class="cell" onclick="play(6)"></div>
+                <div class="cell" onclick="play(7)"></div>
+                <div class="cell" onclick="play(8)"></div>
+            </div>
+            <button class="btn btn-alt" onclick="resetXO()">إعادة اللعب</button>
+            <button class="btn" onclick="showScreen('dashScreen')">الرجوع للرئيسية</button>
         </div>
-
     </div>
 
     <script>
-        let audioEnabled = true;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playSound(type) {
-            if (!audioEnabled) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-
-            let tone = user.selectedTone || 'default';
-            if (type === 'win') {
-                let freq = tone === 'warrior' ? 600 : tone === 'success' ? 523 : tone === 'calm' ? 350 : 440;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + 0.3);
-            } else {
-                osc.frequency.setValueAtTime(250, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
-            }
-            gain.gain.fadeOut(0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-        }
-
-        function triggerConfetti() {
-            if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        }
-
         let user = JSON.parse(localStorage.getItem('qws_active_user')) || null;
-        let winStreak = 0;
-        let isFriendMode = false;
-        let currentPlayer = "X";
-        let activeRoomName = "";
+        let board = ["","","","","","","","",""];
+        let active = true;
+        let winsCounter = 0;
 
-        function goToAuth() {
-            if (user) { showWelcome(); } 
-            else { hideAll(); document.getElementById('authScreen').classList.remove('hidden'); }
+        function showScreen(id) {
+            document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        function loginOrRegister() {
-            const id = document.getElementById('accId').value;
-            const pass = document.getElementById('accPass').value;
-            if (!id || !pass) return alert('اكتب المعرف وكلمة السر!');
+        function showWelcomeOrAuth() {
+            if (user) {
+                document.getElementById('welcomeText').innerText = user.welcomeMsg || 'مرحباً بك في موقع ألعاب QWS!';
+                showScreen('welcomeScreen');
+            } else {
+                showScreen('authScreen');
+            }
+        }
+
+        function login() {
+            let id = document.getElementById('accId').value;
+            let pass = document.getElementById('accPass').value;
+            if (!id || !pass) return alert('يرجى كتابة المعرف وكلمة السر!');
 
             user = {
                 id: id, pass: pass, pts: 0, honor: 0, lvl: 1, 
-                winsCount: 0, lossesCount: 0, drawsCount: 0, winWinsProgress: 0,
-                welcomeMsg: 'مرحبا في موقع العاب QWS', selectedTone: 'default',
-                multiplier: 1, claimedLvlRewards: [], claimedCodes: [], lastWheelTime: 0
+                multiplier: 1, welcomeMsg: 'مرحباً بك في موقع ألعاب QWS!', lastWheel: 0
             };
-            saveData(); showWelcome();
+            saveData();
+            updateUI();
+            showWelcomeOrAuth();
         }
 
-        function showWelcome() {
-            hideAll();
-            document.getElementById('welcomeText').innerText = user.welcomeMsg;
-            document.getElementById('welcomeScreen').classList.remove('hidden');
-        }
-
-        function showDashboard() {
-            hideAll(); updateUI(); renderGlobalChat();
-            document.getElementById('dashScreen').classList.remove('hidden');
+        function getBadge(lvl) {
+            if (lvl >= 80) return 'لانهائي ♾️';
+            if (lvl >= 50) return 'نجم ⭐';
+            if (lvl >= 35) return 'مخضرم 🥇';
+            if (lvl >= 25) return 'محارب فضي 🥈';
+            if (lvl >= 15) return 'مبارز برونزي 🥉';
+            return 'مبتدئ 🌱';
         }
 
         function updateUI() {
-            let b = '';
-            if (user.lvl >= 80) b = '♾️ لا نهائي';
-            else if (user.lvl >= 50) b = '⭐ نجم أسطوري';
-            else if (user.lvl >= 30) b = '🥇 مخضرم';
-            else if (user.lvl >= 15) b = '🥉 محارب';
-
+            if (!user) return;
             document.getElementById('uId').innerText = user.id;
             document.getElementById('uLvl').innerText = user.lvl;
-            document.getElementById('uHonor').innerText = user.honor;
+            document.getElementById('uBadge').innerText = getBadge(user.lvl);
             document.getElementById('uPts').innerText = user.pts;
-            document.getElementById('uBadge').innerText = b;
-            document.getElementById('uStreak').innerText = winStreak > 0 ? `🔥 ${winStreak}` : '';
-
-            document.getElementById('pId').innerText = user.id;
-            document.getElementById('pLvl').innerText = user.lvl;
-            document.getElementById('pHonor').innerText = user.honor;
-            document.getElementById('pBadge').innerText = b || 'لا يوجد';
-            document.getElementById('pMulti').innerText = user.multiplier + 'x';
-            document.getElementById('pWins').innerText = user.winsCount || 0;
-            document.getElementById('pLosses').innerText = user.lossesCount || 0;
-            document.getElementById('pDraws').innerText = user.drawsCount || 0;
+            document.getElementById('uHonor').innerText = user.honor;
             document.getElementById('shopPts').innerText = user.pts;
         }
 
-        /* نظام عجلة الحظ كل يومين */
         function spinWheel() {
-            const now = Date.now();
-            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-
-            if (user.lastWheelTime && (now - user.lastWheelTime < twoDaysInMs)) {
-                const remainingHours = Math.ceil((twoDaysInMs - (now - user.lastWheelTime)) / (1000 * 60 * 60));
-                return alert(`عجلة الحظ مجهزة بالكامل! يمكنك التدوير مجدداً بعد ${remainingHours} ساعة.`);
+            let now = Date.now();
+            if (user.lastWheel && (now - user.lastWheel < 172800000)) {
+                return alert('عجلة الحظ تفتح مرة كل يومين (48 ساعة)!');
             }
-
-            const rand = Math.random() * 100;
-            let resultMsg = "";
-
-            if (rand < 70) {
-                user.pts += 5; resultMsg = "🎉 حصلت على 5 نقاط!";
-            } else if (rand < 90) {
-                user.pts += 8; resultMsg = "🎉 حصلت على 8 نقاط!";
-            } else if (rand < 98) {
-                user.pts += 20; resultMsg = "🔥 رائع! حصلت على 20 نقطة!";
-            } else {
-                user.selectedTone = 'success'; resultMsg = "🌟 جائزة كبرى أسطورية! حصلت على نغمة (محظوظ ناجح) مجاناً!";
-            }
-
-            user.lastWheelTime = now;
+            let r = Math.random() * 100;
+            let gain = r < 70 ? 5 : r < 90 ? 8 : r < 98 ? 20 : 50;
+            user.pts += gain;
+            user.lastWheel = now;
             saveData(); updateUI();
-            alert(resultMsg);
+            alert('🎉 مبروك! حصلت على ' + gain + ' نقطة من عجلة الحظ.');
         }
 
-        /* نظام الشات العام وشات الغرفة */
-        function sendGlobalMsg() {
-            let input = document.getElementById('globalInput');
-            if(!input.value.trim()) return;
-            let msgs = JSON.parse(localStorage.getItem('qws_global_chat')) || [];
-            msgs.push({ id: user.id, text: input.value.trim() });
-            localStorage.setItem('qws_global_chat', JSON.stringify(msgs));
-            input.value = ''; renderGlobalChat();
+        function showShop() { updateUI(); showScreen('shopScreen'); }
+
+        function buyDouble() {
+            if (user.pts < 100) return alert('نقاطك غير كافية!');
+            if (user.multiplier === 2) return alert('الميزة مفعلة لديك مسبقاً!');
+            user.pts -= 100; user.multiplier = 2;
+            saveData(); updateUI(); alert('تم تفعيل مضاعف النقاط 2x!');
         }
 
-        function renderGlobalChat() {
-            let msgs = JSON.parse(localStorage.getItem('qws_global_chat')) || [];
-            let box = document.getElementById('globalChatBox');
-            box.innerHTML = msgs.slice(-15).map(m => `<div class="chat-msg"><strong style="color:#a855f7;">${m.id}:</strong> ${m.text}</div>`).join('');
-            box.scrollTop = box.scrollHeight;
+        function buyWelcome(cost, msg) {
+            if (user.pts < cost) return alert('نقاطك غير كافية!');
+            user.pts -= cost; user.welcomeMsg = msg;
+            saveData(); updateUI(); alert('تم شراء شاشة الترحيب بنجاح!');
         }
 
-        function sendRoomMsg() {
-            let input = document.getElementById('roomInput');
-            if(!input.value.trim()) return;
-            let msgs = JSON.parse(localStorage.getItem(`qws_room_chat_${activeRoomName}`)) || [];
-            msgs.push({ id: user.id, text: input.value.trim() });
-            localStorage.setItem(`qws_room_chat_${activeRoomName}`, JSON.stringify(msgs));
-            input.value = ''; renderRoomChat();
+        function startXO() { resetXO(); showScreen('xoScreen'); }
+
+        function play(i) {
+            if (board[i] !== "" || !active) return;
+            board[i] = "X";
+            render();
+
+            if (checkWin("X")) {
+                let gain = 5 * user.multiplier;
+                user.pts += gain;
+                user.honor += gain;
+                winsCounter++;
+
+                if (winsCounter >= 3) {
+                    user.lvl += 1;
+                    winsCounter = 0;
+                    alert('🔥 أداء ممتاز! زدت ليفل جديد!');
+                }
+
+                document.getElementById('xoStatus').innerText = 'فزت! 🎉 (+' + gain + ' نقطة)';
+                active = false; saveData(); updateUI(); return;
+            }
+
+            if (!board.includes("")) {
+                document.getElementById('xoStatus').innerText = 'تعادل!';
+                active = false; return;
+            }
+
+            document.getElementById('xoStatus').innerText = 'دور الروبوت...';
+            setTimeout(botPlay, 300);
         }
 
-        function renderRoomChat() {
-            let msgs = JSON.parse(localStorage.getItem(`qws_room_chat_${activeRoomName}`)) || [];
-            let box = document.getElementById('roomChatBox');
-            box.innerHTML = msgs.slice(-10).map(m => `<div class="chat-msg"><strong style="color:#ffca28;">${m.id}:</strong> ${m.text}</div>`).join('');
-            box.scrollTop = box.scrollHeight;
+        function botPlay() {
+            let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+            if (empty.length > 0) {
+                let move = empty[Math.floor(Math.random() * empty.length)];
+                board[move] = "O";
+                render();
+
+                if (checkWin("O")) {
+                    user.honor = Math.max(0, user.honor - 3);
+                    document.getElementById('xoStatus').innerText = 'خسرت! 💔 (-3 فخر)';
+                    active = false; saveData(); updateUI(); return;
+                }
+                document.getElementById('xoStatus').innerText = 'دورك الان (X)';
+            }
         }
 
-        /* نظام الغرف والتحدي */
-        function showRoomMenu() { hideAll(); document.getElementById('roomMenuScreen').classList.remove('hidden'); }
+        function checkWin(p) {
+            let w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return w.some(c => c.every(i => board[i] === p));
+        }
 
-        function createRoom() {
-            let rName = document.getElementById('roomNameInput').value;
-            let rPass = document.getElementById('roomPassInput').value;
-            if(!rName || !rPass) return alert('اكتب اسم الغرفة وكلمة السر!');
-            
-            let rooms = JSON.parse(localStorage.getItem('qws_rooms')) || {};
-            rooms[rName] = rPass;
-            localStorage.setItem('qws_rooms', JSON.strin
+        function render() {
+            document.querySelectorAll('.cell').forEach((c, i) => c.innerText = board[i]);
+        }
+
+        function resetXO() {
+            board = ["","","","","","","","",""];
+            active = true;
+            document.getElementById('xoStatus').innerText = 'دورك الان (X)';
+            render();
+        }
+
+        function logout() { localStorage.removeItem('qws_active_user'); location.reload(); }
+        function saveData() { localStorage.setItem('qws_active_user', JSON.stringify(user)); }
+
+        window.onload = function() {
+            if (user) updateUI();
+        };
+    </script>
+</body>
+</html>
