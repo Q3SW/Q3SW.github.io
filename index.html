@@ -17,13 +17,9 @@
         .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
         .cell { height: 75px; background: #2a2a32; border-radius: 8px; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #a855f7; user-select: none; }
         
-        /* أيقونة الحساب */
         .profile-icon { width: 65px; height: 65px; border-radius: 50%; background: #2a2a32; border: 2px solid #8a2be2; margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; cursor: pointer; box-shadow: 0 0 10px rgba(138,43,226,0.4); }
-        
-        /* عجلة الحظ */
         .wheel-box { width: 160px; height: 160px; border-radius: 50%; border: 5px solid #8a2be2; margin: 15px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: conic-gradient(#8a2be2 0deg 90deg, #059669 90deg 180deg, #b91c1c 180deg 270deg, #d97706 270deg 360deg); transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99); box-shadow: 0 0 15px rgba(138,43,226,0.5); }
         
-        /* التبويبات */
         .tab-btn { width: 48%; display: inline-block; padding: 10px; background: #2a2a32; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; border: 1px solid #444; }
         .tab-active { background: #8a2be2; border-color: #a855f7; }
     </style>
@@ -37,23 +33,26 @@
             <button class="btn" onclick="showAuthOption()">متابعة</button>
         </div>
 
-        <!-- 2. شاشة الحسابات (تسجيل دخول / إنشاء حساب) -->
+        <!-- 2. شاشة الحسابات -->
         <div id="authScreen" class="hidden">
             <div style="margin-bottom: 15px;">
                 <span id="tabLoginBtn" class="tab-btn tab-active" onclick="switchAuthTab('login')">تسجيل دخول</span>
                 <span id="tabRegBtn" class="tab-btn" onclick="switchAuthTab('reg')">حساب جديد</span>
             </div>
 
-            <!-- نموذج تسجيل الدخول -->
+            <!-- دخول -->
             <div id="loginForm">
                 <input type="number" id="loginId" placeholder="المعرف (8 أرقام)">
                 <input type="password" id="loginPass" placeholder="كلمة السر">
                 <button class="btn" onclick="handleLogin()">دخول</button>
             </div>
 
-            <!-- نموذج حساب جديد -->
+            <!-- جديد مع معرف تلقائي -->
             <div id="regForm" class="hidden">
-                <input type="number" id="regId" placeholder="اختر معرف (8 أرقام)">
+                <div style="position: relative;">
+                    <input type="text" id="regId" readonly style="background:#1a1a20; color:#a855f7; font-weight:bold; cursor:not-allowed;" title="معرف تلقائي">
+                </div>
+                <button class="btn btn-alt" style="margin-top:0; margin-bottom:10px; font-size:12px; padding:8px;" onclick="generateAutoId()">توليد معرف آخر 🎲</button>
                 <input type="password" id="regPass" placeholder="اختر كلمة السر">
                 <button class="btn" onclick="handleRegister()">إنشاء الحساب</button>
             </div>
@@ -67,7 +66,6 @@
 
         <!-- 4. القائمة الرئيسية -->
         <div id="dashScreen" class="hidden">
-            <!-- أيقونة الحساب -->
             <div class="profile-icon" onclick="showScreen('profileScreen')" title="الملف الشخصي">👤</div>
             <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">اضغط على الأيقونة لرؤية معلومات حسابك وشاراتك</p>
 
@@ -190,7 +188,16 @@
                 showScreen('welcomeScreen');
             } else {
                 showScreen('authScreen');
+                generateAutoId();
             }
+        }
+
+        function generateAutoId() {
+            let newId;
+            do {
+                newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+            } while (accounts[newId]);
+            document.getElementById('regId').value = newId;
         }
 
         function switchAuthTab(tab) {
@@ -204,15 +211,14 @@
                 document.getElementById('regForm').classList.remove('hidden');
                 document.getElementById('tabRegBtn').classList.add('tab-active');
                 document.getElementById('tabLoginBtn').classList.remove('tab-active');
+                generateAutoId();
             }
         }
 
         function handleRegister() {
-            let id = document.getElementById('regId').value.trim();
+            let id = document.getElementById('regId').value;
             let pass = document.getElementById('regPass').value.trim();
-            if (id.length !== 8) return alert('خطأ: المعرف يجب أن يتكون من 8 أرقام بالضبط!');
             if (!pass) return alert('يرجى كتابة كلمة السر!');
-            if (accounts[id]) return alert('هذا المعرف مستخدم من قبل، اختر معرفاً آخر!');
 
             accounts[id] = {
                 id: id, pass: pass, pts: 0, honor: 0, lvl: 1, 
@@ -220,7 +226,391 @@
                 welcomeMsg: 'مرحباً بك في موقع ألعاب QWS!', winMsg: 'فزت باللعبة! 🎉', lastWheel: 0
             };
             saveAccounts();
-            alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+            alert('تم إنشاء الحساب بنجاح!\nمعرفك الخاص هو: ' + id + '\nاحفظ المعرف لتسجيل الدخول به مستقبلاً.');
+            switchAuthTab('login');
+            document.getElementById('loginId').value = id;
+        }
+
+        function handleLogin() {
+            let id = document.getElementById('loginId').value.trim();
+            let pass = document.getElementById('loginPass').value.trim();
+            if (!accounts[id] || accounts[id].pass !== pass) {
+                return alert('المعرف أو كلمة السر غير صحيحة!');
+            }
+            activeUserId = id;
+            currentUser = accounts[id];
+            localStorage.setItem('qws_active_id', id);
+            showAuthOption();
+        }
+
+        function updateUI() {
+            if (!currentUser) return;
+            document.getElementById('pId').innerText = currentUser.id;
+            document.getElementById('pLvl').innerText = currentUser.lvl;
+            document.getElementById('pPts').innerText = currentUser.pts;
+            document.getElementById('pHonor').innerText = currentUser.honor;
+            document.getElementById('pBadge').innerText = currentUser.badge;
+            document.getElementById('bLvl').innerText = currentUser.lvl;
+            document.getElementById('shopPts').innerText = currentUser.pts;
+        }
+
+        function claimBadge(reqLvl, badgeName) {
+            if (currentUser.lvl >= reqLvl) {
+                currentUser.badge = badgeName;
+                saveAccounts(); updateUI();
+                alert('مبروك🎉 تم حصول على ' + badgeName);
+            } else {
+                alert('عدد ليفل مطلوب غير كافي!');
+            }
+        }
+
+        function spinWheel() {
+            let now = Date.now();
+            if (currentUser.lastWheel && (now - currentUser.lastWheel < 172800000)) {
+                return alert('عجلة الحظ متاحة مرة كل يومين (48 ساعة)!');
+            }
+            rotation += 1440 + Math.floor(Math.random() * 360);
+            document.getElementById('wheel').style.transform = `rotate(${rotation}deg)`;
+            
+            setTimeout(() => {
+                let r = Math.random() * 100;
+                let gain = r < 70 ? 5 : r < 90 ? 8 : r < 98 ? 20 : 50;
+                currentUser.pts += gain;
+                currentUser.lastWheel = now;
+                saveAccounts(); updateUI();
+                alert('🎉 مبروك! حصلت على ' + gain + ' نقطة من عجلة الحظ!');
+            }, 3000);
+        }
+
+        function showShop() { updateUI(); showScreen('shopScreen'); }
+
+        function buyItem(cost, type, val) {
+            if (currentUser.pts < cost) return alert('نقاطك غير كافية!');
+            
+            if (type === 'double') {
+                if (currentUser.multiplier === 2) return alert('الميزة مفعلة لديك مسبقاً!');
+                currentUser.multiplier = 2;
+            } else if (type === 'welcome') {
+                currentUser.welcomeMsg = val;
+            } else if (type === 'winMsg') {
+                currentUser.winMsg = val;
+            }
+            
+            currentUser.pts -= cost;
+            saveAccounts(); updateUI(); 
+            alert('تم الشراء بنجاح!');
+        }
+
+        function startXO() { resetXO(); showScreen('xoScreen'); }
+
+        function play(i) {
+            if (board[i] !== "" || !active) return;
+            board[i] = "X";
+            render();
+
+            if (checkWin("X")) {
+                let gain = 5 * currentUser.multiplier;
+                currentUser.pts += gain;
+                currentUser.honor += gain;
+                winsCounter++;
+
+                if (winsCounter >= 3) {
+                    currentUser.lvl += 1;
+                    winsCounter = 0;
+                    alert('🔥 أداء ممتاز! ارتفع مستواك لليفل جديد!');
+                }
+
+                document.getElementById('xoStatus').innerText = currentUser.winMsg + ' (+' + gain + ' نقطة)';
+                active = false; saveAccounts(); updateUI(); return;
+            }
+
+            if (!board.includes("")) {
+                document.getElementById('xoStatus').innerText = 'تعادل!';
+                active = false; return;
+            }
+
+            document.getElementById('xoStatus').innerText = 'دور الروبوت...';
+            setTimeout(botPlay, 350);
+        }
+
+        function botPlay() {
+            let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+            if (empty.length > 0) {
+                let move = empty[Math.floor(Math.random() * empty.length)];
+                board[move] = "O";
+                render();
+
+                if (checkWin("O")) {
+                    currentUser.honor = Math.max(0, currentUser.honor - 3);
+                    document.getElementById('xoStatus').innerText = 'خسرت! 💔 (-3 فخر)';
+                    active = false; saveAccounts(); updateUI(); return;
+                }
+                document.getElementById('xoStatus').innerText = 'دورك الان (X)';
+            }
+        }
+
+        function checkWin(p) {
+            let w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return w.some(c => c.every(i => board[i] === p));
+        }
+
+        function render() {
+            document.querySelectorAll('.cell').forEach((c, i) => c.innerText = board[i]);
+        }
+
+        function resetXO() {
+            board = ["","","","","","","","",""];
+            active = true;
+            document.getElementById('xoStatus').innerText = 'دورك الان (X)';
+            render();
+        }
+
+        function logout() {
+            localStorage.removeItem('qws_active_id');
+            currentUser = null;
+            location.reload();
+        }
+
+        function saveAccounts() {
+            if (currentUser) accounts[currentUser.id] = currentUser;
+            localStorage.setItem('qws_accounts', JSON.stringify(accounts));
+        }
+
+        window.onload = function() {
+            if (currentUser) updateUI();
+        };
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع ألعاب QWS</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #121214; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        .container { width: 100%; max-width: 420px; background: #1e1e24; padding: 20px; border-radius: 16px; border: 1px solid #8a2be2; text-align: center; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .hidden { display: none !important; }
+        .btn { background: #8a2be2; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-alt { background: #2a2a32; border: 1px solid #444; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #8a2be2; background: #000; color: #fff; text-align: center; font-size: 15px; outline: none; }
+        .card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; text-align: right; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(138,43,226,0.2); }
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .cell { height: 75px; background: #2a2a32; border-radius: 8px; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #a855f7; user-select: none; }
+        
+        .profile-icon { width: 65px; height: 65px; border-radius: 50%; background: #2a2a32; border: 2px solid #8a2be2; margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; cursor: pointer; box-shadow: 0 0 10px rgba(138,43,226,0.4); }
+        .wheel-box { width: 160px; height: 160px; border-radius: 50%; border: 5px solid #8a2be2; margin: 15px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: conic-gradient(#8a2be2 0deg 90deg, #059669 90deg 180deg, #b91c1c 180deg 270deg, #d97706 270deg 360deg); transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99); box-shadow: 0 0 15px rgba(138,43,226,0.5); }
+        
+        .tab-btn { width: 48%; display: inline-block; padding: 10px; background: #2a2a32; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; border: 1px solid #444; }
+        .tab-active { background: #8a2be2; border-color: #a855f7; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. شاشة البداية -->
+        <div id="startScreen">
+            <h2 style="margin-bottom:15px; color:#a855f7;">مرحباً في موقع ألعاب QWS ⚙️</h2>
+            <button class="btn" onclick="showAuthOption()">متابعة</button>
+        </div>
+
+        <!-- 2. شاشة الحسابات -->
+        <div id="authScreen" class="hidden">
+            <div style="margin-bottom: 15px;">
+                <span id="tabLoginBtn" class="tab-btn tab-active" onclick="switchAuthTab('login')">تسجيل دخول</span>
+                <span id="tabRegBtn" class="tab-btn" onclick="switchAuthTab('reg')">حساب جديد</span>
+            </div>
+
+            <!-- دخول -->
+            <div id="loginForm">
+                <input type="number" id="loginId" placeholder="المعرف (8 أرقام)">
+                <input type="password" id="loginPass" placeholder="كلمة السر">
+                <button class="btn" onclick="handleLogin()">دخول</button>
+            </div>
+
+            <!-- جديد مع معرف تلقائي -->
+            <div id="regForm" class="hidden">
+                <div style="position: relative;">
+                    <input type="text" id="regId" readonly style="background:#1a1a20; color:#a855f7; font-weight:bold; cursor:not-allowed;" title="معرف تلقائي">
+                </div>
+                <button class="btn btn-alt" style="margin-top:0; margin-bottom:10px; font-size:12px; padding:8px;" onclick="generateAutoId()">توليد معرف آخر 🎲</button>
+                <input type="password" id="regPass" placeholder="اختر كلمة السر">
+                <button class="btn" onclick="handleRegister()">إنشاء الحساب</button>
+            </div>
+        </div>
+
+        <!-- 3. شاشة الترحيب -->
+        <div id="welcomeScreen" class="hidden">
+            <h3 id="welcomeText" style="margin-bottom:20px; line-height: 1.5; color:#a855f7;"></h3>
+            <button class="btn" onclick="showScreen('dashScreen')">الانتقال للرئيسية</button>
+        </div>
+
+        <!-- 4. القائمة الرئيسية -->
+        <div id="dashScreen" class="hidden">
+            <div class="profile-icon" onclick="showScreen('profileScreen')" title="الملف الشخصي">👤</div>
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">اضغط على الأيقونة لرؤية معلومات حسابك وشاراتك</p>
+
+            <button class="btn" onclick="startXO()">لعبة XO (ضد الروبوت)</button>
+            <button class="btn btn-alt" style="background:#059669; border:none;" onclick="showScreen('wheelScreen')">عجلة الحظ 🎡</button>
+            <button class="btn btn-alt" onclick="showShop()">المتجر 🛒</button>
+            <button class="btn btn-alt" style="background:#b91c1c; border:none; margin-top:15px;" onclick="logout()">تسجيل الخروج</button>
+        </div>
+
+        <!-- 5. شاشة الملف الشخصي -->
+        <div id="profileScreen" class="hidden">
+            <h3>الملف الشخصي 👤</h3>
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin:15px 0; text-align:right; line-height:2; border: 1px solid rgba(138,43,226,0.3);">
+                <p>🆔 المعرف: <strong id="pId"></strong></p>
+                <p>⭐ الليفل: <strong id="pLvl">1</strong></p>
+                <p>🏆 النقاط: <strong id="pPts">0</strong></p>
+                <p>🔥 الفخر: <strong id="pHonor">0</strong></p>
+                <p>🎖️ الشارة المجهزة: <strong id="pBadge" style="color:#ffca28;">مبتدئ 🌱</strong></p>
+            </div>
+            <button class="btn" style="background:#d97706;" onclick="showScreen('badgesScreen')">ميزات الشارات 🎖️</button>
+            <button class="btn btn-alt" onclick="showScreen('dashScreen')">الرجوع للرئيسية</button>
+        </div>
+
+        <!-- 6. شاشة ميزات الشارات -->
+        <div id="badgesScreen" class="hidden">
+            <h3>ميزات الشارات 🎖️</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">ليفل حسابك الحالي: <span id="bLvl" style="color:#a855f7; font-weight:bold;">1</span></p>
+
+            <div class="card">
+                <div>شارة مبارز 🤵 (مطلوب: 10 ليفل)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="claimBadge(10, 'شارة مبارز 🤵')">حصول</button>
+            </div>
+            <div class="card">
+                <div>شارة محارب 🦸 (مطلوب: 25 ليفل)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="claimBadge(25, 'شارة محارب 🦸')">حصول</button>
+            </div>
+            <div class="card">
+                <div>شارة مخضرم 🥷 (مطلوب: 35 ليفل)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="claimBadge(35, 'شارة مخضرم 🥷')">حصول</button>
+            </div>
+            <div class="card">
+                <div>شارة نجم 🦹🔥 (مطلوب: 50 ليفل)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="claimBadge(50, 'شارة نجم 🦹🔥')">حصول</button>
+            </div>
+            <div class="card">
+                <div>شارة لانهائي 💠🔱 (مطلوب: 80 ليفل)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="claimBadge(80, 'شارة لانهائي 💠🔱')">حصول</button>
+            </div>
+
+            <button class="btn btn-alt" style="margin-top:10px;" onclick="showScreen('profileScreen')">الرجوع للملف الشخصي</button>
+        </div>
+
+        <!-- 7. شاشة عجلة الحظ -->
+        <div id="wheelScreen" class="hidden">
+            <h3>عجلة الحظ 🎡</h3>
+            <div id="wheel" class="wheel-box">QWS</div>
+            <button class="btn" onclick="spinWheel()">تدوير العجلة!</button>
+            <button class="btn btn-alt" onclick="showScreen('dashScreen')">الرجوع للرئيسية</button>
+        </div>
+
+        <!-- 8. المتجر -->
+        <div id="shopScreen" class="hidden">
+            <h3>المتجر 🛒</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">نقاطك الحالية: <span id="shopPts" style="color:#a855f7; font-weight:bold;">0</span></p>
+
+            <div class="card">
+                <div>شاشة ترحيب مميزة (20 نقطة)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="buyItem(20, 'welcome', 'أهلاً بك يا بطل في موقع QWS المميز!')">شراء</button>
+            </div>
+            <div class="card">
+                <div>شاشة تهنئة عند الفوز (50 نقطة)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="buyItem(50, 'winMsg', '🏆 أنت أسطورة QWS التي لا تُقهر!')">شراء</button>
+            </div>
+            <div class="card">
+                <div>مضاعف النقاط 2x (100 نقطة)</div>
+                <button class="btn" style="width:auto; padding:5px 12px; margin:0;" onclick="buyItem(100, 'double', '')">شراء</button>
+            </div>
+
+            <button class="btn btn-alt" style="margin-top:15px;" onclick="showScreen('dashScreen')">الرجوع للرئيسية</button>
+        </div>
+
+        <!-- 9. لعبة XO -->
+        <div id="xoScreen" class="hidden">
+            <h3 id="xoStatus" style="color:#a855f7;">دورك الان (X)</h3>
+            <div class="board">
+                <div class="cell" onclick="play(0)"></div>
+                <div class="cell" onclick="play(1)"></div>
+                <div class="cell" onclick="play(2)"></div>
+                <div class="cell" onclick="play(3)"></div>
+                <div class="cell" onclick="play(4)"></div>
+                <div class="cell" onclick="play(5)"></div>
+                <div class="cell" onclick="play(6)"></div>
+                <div class="cell" onclick="play(7)"></div>
+                <div class="cell" onclick="play(8)"></div>
+            </div>
+            <button class="btn btn-alt" onclick="resetXO()">إعادة اللعب</button>
+            <button class="btn" onclick="showScreen('dashScreen')">الرجوع للرئيسية</button>
+        </div>
+    </div>
+
+    <script>
+        let accounts = JSON.parse(localStorage.getItem('qws_accounts')) || {};
+        let activeUserId = localStorage.getItem('qws_active_id') || null;
+        let currentUser = activeUserId ? accounts[activeUserId] : null;
+
+        let board = ["","","","","","","","",""];
+        let active = true;
+        let winsCounter = 0;
+        let rotation = 0;
+
+        function showScreen(id) {
+            document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            updateUI();
+        }
+
+        function showAuthOption() {
+            if (currentUser) {
+                document.getElementById('welcomeText').innerText = currentUser.welcomeMsg || 'مرحباً بك في موقع ألعاب QWS!';
+                showScreen('welcomeScreen');
+            } else {
+                showScreen('authScreen');
+                generateAutoId();
+            }
+        }
+
+        function generateAutoId() {
+            let newId;
+            do {
+                newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+            } while (accounts[newId]);
+            document.getElementById('regId').value = newId;
+        }
+
+        function switchAuthTab(tab) {
+            if(tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('regForm').classList.add('hidden');
+                document.getElementById('tabLoginBtn').classList.add('tab-active');
+                document.getElementById('tabRegBtn').classList.remove('tab-active');
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('regForm').classList.remove('hidden');
+                document.getElementById('tabRegBtn').classList.add('tab-active');
+                document.getElementById('tabLoginBtn').classList.remove('tab-active');
+                generateAutoId();
+            }
+        }
+
+        function handleRegister() {
+            let id = document.getElementById('regId').value;
+            let pass = document.getElementById('regPass').value.trim();
+            if (!pass) return alert('يرجى كتابة كلمة السر!');
+
+            accounts[id] = {
+                id: id, pass: pass, pts: 0, honor: 0, lvl: 1, 
+                badge: 'مبتدئ 🌱', multiplier: 1, 
+                welcomeMsg: 'مرحباً بك في موقع ألعاب QWS!', winMsg: 'فزت باللعبة! 🎉', lastWheel: 0
+            };
+            saveAccounts();
+            alert('تم إنشاء الحساب بنجاح!\nمعرفك الخاص هو: ' + id + '\nاحفظ المعرف لتسجيل الدخول به مستقبلاً.');
             switchAuthTab('login');
             document.getElementById('loginId').value = id;
         }
